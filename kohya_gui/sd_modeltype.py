@@ -24,7 +24,8 @@ class SDModelType:
         # Filename-based FLUX1 recognition for specific model files
         filename = safetensors_path.lower()
         if ("flux_krea_dev.safetensors" in filename or
-            "flux-srpo-bf16.safetensors" in filename):
+            "flux-srpo-bf16.safetensors" in filename or
+            "flux1-krea-dev.safetensors" in filename):
             self.model_type = ModelType.FLUX1
             return
 

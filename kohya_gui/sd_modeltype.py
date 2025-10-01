@@ -21,6 +21,13 @@ class SDModelType:
         if not isfile(safetensors_path):
             return
 
+        # Filename-based FLUX1 recognition for specific model files
+        filename = safetensors_path.lower()
+        if ("flux_krea_dev.safetensors" in filename or
+            "flux-srpo-bf16.safetensors" in filename):
+            self.model_type = ModelType.FLUX1
+            return
+
         try:
             st = safe_open(filename=safetensors_path, framework="numpy", device="cpu")
 

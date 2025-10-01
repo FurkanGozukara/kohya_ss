@@ -21,6 +21,7 @@ cudnn_windows
 locon
 gui-user.bat
 gui-user.ps1
+sd-scripts
 
 # Version control
 SmilingWolf

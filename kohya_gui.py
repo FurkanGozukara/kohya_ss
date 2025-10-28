@@ -12,6 +12,7 @@ from kohya_gui.textual_inversion_gui import ti_tab
 from kohya_gui.utilities import utilities_tab
 from kohya_gui.lora_gui import lora_tab
 from kohya_gui.class_lora_tab import LoRATools
+from kohya_gui.image_preprocessing_gui import gradio_image_preprocessing_gui_tab
 from kohya_gui.custom_logging import setup_logging
 from kohya_gui.localization_ext import add_javascript
 
@@ -29,10 +30,11 @@ def read_file_content(file_path):
 def initialize_ui_interface(config, headless, use_shell, release_info, readme_content):
     # Load custom CSS if available
     css = read_file_content("./assets/style.css")
-
+    
     # Create the main Gradio Blocks interface
     ui_interface = gr.Blocks(css=css, title=f"Kohya_ss GUI {release_info}", theme=gr.themes.Default())
     with ui_interface:
+        gr.Markdown("## SECourses Premium Kohya GUI V32: https://www.patreon.com/posts/112099700")
         # Create tabs for different functionalities
         with gr.Tab("Dreambooth"):
             (
@@ -59,6 +61,8 @@ def initialize_ui_interface(config, headless, use_shell, release_info, readme_co
             )
             with gr.Tab("LoRA"):
                 _ = LoRATools(headless=headless)
+        with gr.Tab("Image Preprocessing"):
+            gradio_image_preprocessing_gui_tab(headless=headless, config=config)
         with gr.Tab("About"):
             # About tab to display release information and README content
             gr.Markdown(f"kohya_ss GUI release {release_info}")

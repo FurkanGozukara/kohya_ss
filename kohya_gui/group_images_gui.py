@@ -80,7 +80,7 @@ def gradio_group_images_gui_tab(headless=False):
         current_output_folder = path
         return list(list_dirs(path))
 
-    with gr.Tab("Group Images"):
+    with gr.Tab("Preprocess Images"):
         gr.Markdown(
             "This utility will group images in a folder based on their aspect ratio."
         )

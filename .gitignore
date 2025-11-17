@@ -24,8 +24,10 @@ gui-user.ps1
 sd-scripts
 
 # Version control
+SECourses_Musubi_Trainer
 SmilingWolf
 wandb
+example_datasets
 
 # Setup and logs
 setup.log

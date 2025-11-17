@@ -8,6 +8,7 @@ from .git_caption_gui import gradio_git_caption_gui_tab
 from .wd14_caption_gui import gradio_wd14_caption_gui_tab
 from .manual_caption_gui import gradio_manual_caption_gui_tab
 from .group_images_gui import gradio_group_images_gui_tab
+from .flux_fp8_converter_gui import flux_fp8_converter_tab
 from .class_gui_config import KohyaSSGUIConfig
 
 
@@ -27,6 +28,7 @@ def utilities_tab(
         gradio_wd14_caption_gui_tab(headless=headless, config=config)
         gradio_manual_caption_gui_tab(headless=headless)
     gradio_convert_model_tab(headless=headless)
+    flux_fp8_converter_tab(headless=headless, config=config)
     gradio_group_images_gui_tab(headless=headless)
 
     return (

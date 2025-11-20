@@ -339,11 +339,16 @@ class AdvancedTraining:
         
         # Torch Compile Settings
         with gr.Accordion("Torch Compile Settings", open=False):
+            gr.Markdown(
+                "⚠️ **Important**: torch.compile is incompatible with gradient checkpointing. "
+                "For speedup, disable gradient checkpointing below. "
+                "Choose ONE: compile (speed) OR checkpointing (memory)."
+            )
             with gr.Row():
                 self.compile = gr.Checkbox(
                     label="Enable torch.compile",
                     value=self.config.get("advanced.compile", False),
-                    info="Enable torch.compile for faster training (requires PyTorch 2.1+, Triton for CUDA). Works with SDXL and FLUX.",
+                    info="Enable torch.compile for faster training (requires PyTorch 2.1+, Triton for CUDA). Works with SDXL and FLUX. Disable gradient checkpointing for best results!",
                 )
                 self.compile_backend = gr.Dropdown(
                     label="Compile Backend",

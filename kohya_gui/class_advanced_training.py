@@ -280,6 +280,18 @@ class AdvancedTraining:
                 value=self.config.get("advanced.full_bf16", False),
                 info="Required bitsandbytes >= 0.36.0",
             )
+        
+        with gr.Row():
+            self.disable_mmap_load_safetensors = gr.Checkbox(
+                label="Disable memory-efficient loading",
+                info="NOT RECOMMENDED: Disables memory-efficient model loading (uses 50% more RAM). Enable only if you have issues.",
+                value=self.config.get("advanced.disable_mmap_load_safetensors", False),
+            )
+            self.disable_numpy_memmap = gr.Checkbox(
+                label="Disable numpy memmap optimization",
+                info="Disable numpy memory mapping for edge cases where it causes issues",
+                value=self.config.get("advanced.disable_numpy_memmap", False),
+            )
 
             self.full_fp16.change(
                 full_options_update,

@@ -142,6 +142,8 @@ def save_configuration(
     fp8_scaled,
     fp8_fast,
     full_fp16,
+    disable_mmap_load_safetensors,
+    disable_numpy_memmap,
     highvram,
     lowvram,
     xformers,
@@ -437,6 +439,8 @@ def open_configuration(
     fp8_scaled,
     fp8_fast,
     full_fp16,
+    disable_mmap_load_safetensors,
+    disable_numpy_memmap,
     highvram,
     lowvram,
     xformers,
@@ -823,6 +827,8 @@ def train_model(
     fp8_scaled,
     fp8_fast,
     full_fp16,
+    disable_mmap_load_safetensors,
+    disable_numpy_memmap,
     highvram,
     lowvram,
     xformers,
@@ -1547,9 +1553,10 @@ def train_model(
     elif sd3_checkbox:
         t5xxl_value = sd3_t5xxl
 
-    disable_mmap_load_safetensors_value = None
-    if sd3_checkbox:
-        disable_mmap_load_safetensors_value = sd3_disable_mmap_load_safetensors
+    disable_mmap_load_safetensors_value = (
+        sd3_disable_mmap_load_safetensors if sd3_checkbox
+        else disable_mmap_load_safetensors
+    )
 
     config_toml_data = {
         "adaptive_noise_scale": (
@@ -1588,6 +1595,7 @@ def train_model(
         "dynamo_backend": dynamo_backend,
         "dim_from_weights": dim_from_weights,
         "disable_mmap_load_safetensors": disable_mmap_load_safetensors_value,
+        "disable_numpy_memmap": disable_numpy_memmap,
         "enable_bucket": enable_bucket,
         "epoch": int(epoch),
         "flip_aug": flip_aug,
@@ -2924,6 +2932,8 @@ def lora_tab(
             advanced_training.fp8_scaled,
             advanced_training.fp8_fast,
             advanced_training.full_fp16,
+            advanced_training.disable_mmap_load_safetensors,
+            advanced_training.disable_numpy_memmap,
             advanced_training.highvram,
             advanced_training.lowvram,
             advanced_training.xformers,

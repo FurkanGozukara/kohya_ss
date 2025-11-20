@@ -336,6 +336,47 @@ class AdvancedTraining:
                 value=self.config.get("advanced.masked_loss", False),
                 info="Apply mask for calculating loss. conditioning_data_dir is required for dataset",
             )
+        
+        # Torch Compile Settings
+        with gr.Accordion("Torch Compile Settings", open=False):
+            with gr.Row():
+                self.compile = gr.Checkbox(
+                    label="Enable torch.compile",
+                    value=self.config.get("advanced.compile", False),
+                    info="Enable torch.compile for faster training (requires PyTorch 2.1+, Triton for CUDA). Works with SDXL and FLUX.",
+                )
+                self.compile_backend = gr.Dropdown(
+                    label="Compile Backend",
+                    choices=["inductor", "cudagraphs", "eager", "aot_eager"],
+                    value=self.config.get("advanced.compile_backend", "inductor"),
+                    info="Backend for torch.compile (default: inductor)",
+                )
+                self.compile_mode = gr.Dropdown(
+                    label="Compile Mode",
+                    choices=["default", "reduce-overhead", "max-autotune", "max-autotune-no-cudagraphs"],
+                    value=self.config.get("advanced.compile_mode", "default"),
+                    info="Optimization mode for torch.compile",
+                )
+            with gr.Row():
+                self.compile_dynamic = gr.Dropdown(
+                    label="Dynamic Shapes",
+                    choices=["auto", "true", "false"],
+                    value=self.config.get("advanced.compile_dynamic", "auto"),
+                    info="Dynamic shape handling: auto (default), true (enable), false (disable)",
+                )
+                self.compile_fullgraph = gr.Checkbox(
+                    label="Fullgraph Mode",
+                    value=self.config.get("advanced.compile_fullgraph", False),
+                    info="Enable fullgraph mode in torch.compile (may fail with complex models)",
+                )
+                self.compile_cache_size_limit = gr.Number(
+                    label="Cache Size Limit",
+                    value=self.config.get("advanced.compile_cache_size_limit", 0),
+                    minimum=0,
+                    step=1,
+                    precision=0,
+                    info="Set torch._dynamo.config.cache_size_limit (0 = use PyTorch default, typically 8-32)",
+                )
         with gr.Row():
             self.scale_v_pred_loss_like_noise_pred = gr.Checkbox(
                 label="Scale v prediction loss",

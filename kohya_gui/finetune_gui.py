@@ -243,6 +243,13 @@ def save_configuration(
     double_blocks_to_swap,
     mem_eff_save,
     apply_t5_attn_mask,
+    # Torch compile parameters
+    compile,
+    compile_backend,
+    compile_mode,
+    compile_dynamic,
+    compile_fullgraph,
+    compile_cache_size_limit,
 ):
     # Get list of function parameters and values
     parameters = list(locals().items())
@@ -459,6 +466,13 @@ def open_configuration(
     double_blocks_to_swap,
     mem_eff_save,
     apply_t5_attn_mask,
+    # Torch compile parameters
+    compile,
+    compile_backend,
+    compile_mode,
+    compile_dynamic,
+    compile_fullgraph,
+    compile_cache_size_limit,
     training_preset,
 ):
     # Get list of function parameters and values
@@ -681,6 +695,13 @@ def train_model(
     double_blocks_to_swap,
     mem_eff_save,
     apply_t5_attn_mask,
+    # Torch compile parameters
+    compile,
+    compile_backend,
+    compile_mode,
+    compile_dynamic,
+    compile_fullgraph,
+    compile_cache_size_limit,
 ):
     # Get list of function parameters and values
     parameters = list(locals().items())
@@ -1129,6 +1150,13 @@ def train_model(
         "double_blocks_to_swap": double_blocks_to_swap if flux1_checkbox else None,
         "mem_eff_save": mem_eff_save if flux1_checkbox else None,
         "apply_t5_attn_mask": apply_t5_attn_mask if flux1_checkbox else None,
+        # Torch compile parameters (for SDXL and FLUX)
+        "compile": compile if (sdxl or flux1_checkbox) else None,
+        "compile_backend": compile_backend if compile and (sdxl or flux1_checkbox) else None,
+        "compile_mode": compile_mode if compile and (sdxl or flux1_checkbox) else None,
+        "compile_dynamic": compile_dynamic if compile and (sdxl or flux1_checkbox) and compile_dynamic != "auto" else None,
+        "compile_fullgraph": compile_fullgraph if compile and (sdxl or flux1_checkbox) else None,
+        "compile_cache_size_limit": int(compile_cache_size_limit) if compile and (sdxl or flux1_checkbox) and compile_cache_size_limit > 0 else None,
     }
 
     # Given dictionary `config_toml_data`
@@ -1588,6 +1616,13 @@ def finetune_tab(
             flux1_training.double_blocks_to_swap,
             flux1_training.mem_eff_save,
             flux1_training.apply_t5_attn_mask,
+            # Torch compile parameters
+            advanced_training.compile,
+            advanced_training.compile_backend,
+            advanced_training.compile_mode,
+            advanced_training.compile_dynamic,
+            advanced_training.compile_fullgraph,
+            advanced_training.compile_cache_size_limit,
         ]
 
         configuration.button_open_config.click(

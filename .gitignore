@@ -21,6 +21,7 @@ cudnn_windows
 locon
 gui-user.bat
 gui-user.ps1
+musubi-tuner
 sd-scripts
 
 # Version control

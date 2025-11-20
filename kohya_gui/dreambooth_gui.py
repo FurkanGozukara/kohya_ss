@@ -1174,23 +1174,44 @@ def dreambooth_tab(
     with gr.Tab("Training"), gr.Column(variant="compact"):
         gr.Markdown("Train a custom model using kohya dreambooth python code...")
 
+        # Button to open/close all accordions
+        with gr.Row():
+            open_all_accordions = gr.Button("Open all accordions", elem_id="open_all_accordions", size="sm")
+            close_all_accordions = gr.Button("Close all accordions", elem_id="close_all_accordions", size="sm")
+        
+        accordions = []
+
         # Setup Configuration Files Gradio
-        with gr.Accordion("Configuration", open=False):
+        acc_configuration = gr.Accordion("Configuration", open=False)
+        accordions.append(acc_configuration)
+        with acc_configuration:
             configuration = ConfigurationFile(headless=headless, config=config)
 
-        with gr.Accordion("Accelerate launch", open=False), gr.Column():
+        acc_accelerate_launch = gr.Accordion("Accelerate launch", open=False)
+        accordions.append(acc_accelerate_launch)
+        with acc_accelerate_launch, gr.Column():
             accelerate_launch = AccelerateLaunch(config=config)
+            accordions.append(accelerate_launch.acc_resource_selection)
+            accordions.append(accelerate_launch.acc_hardware_selection)
+            accordions.append(accelerate_launch.acc_distributed_gpus)
 
         with gr.Column():
             source_model = SourceModel(headless=headless, config=config)
+            accordions.append(source_model.acc_model)
 
-        with gr.Accordion("Folders", open=False), gr.Group():
+        acc_folders = gr.Accordion("Folders", open=False)
+        accordions.append(acc_folders)
+        with acc_folders, gr.Group():
             folders = Folders(headless=headless, config=config)
 
-        with gr.Accordion("Metadata", open=False), gr.Group():
+        acc_metadata = gr.Accordion("Metadata", open=False)
+        accordions.append(acc_metadata)
+        with acc_metadata, gr.Group():
             metadata = MetaData(config=config)
 
-        with gr.Accordion("Dataset Preparation", open=False):
+        acc_dataset_preparation = gr.Accordion("Dataset Preparation", open=False)
+        accordions.append(acc_dataset_preparation)
+        with acc_dataset_preparation:
             gr.Markdown(
                 "This section provide Dreambooth tools to help setup your dataset..."
             )
@@ -1205,8 +1226,12 @@ def dreambooth_tab(
 
             gradio_dataset_balancing_tab(headless=headless)
 
-        with gr.Accordion("Parameters", open=False), gr.Column():
-            with gr.Accordion("Basic", open="True"):
+        acc_parameters = gr.Accordion("Parameters", open=False)
+        accordions.append(acc_parameters)
+        with acc_parameters, gr.Column():
+            acc_basic = gr.Accordion("Basic", open="True")
+            accordions.append(acc_basic)
+            with acc_basic:
                 with gr.Group(elem_id="basic_tab"):
                     basic_training = BasicTraining(
                         learning_rate_value=1e-5,
@@ -1237,7 +1262,9 @@ def dreambooth_tab(
                 headless=headless, config=config, sd3_checkbox=source_model.sd3_checkbox
             )
 
-            with gr.Accordion("Advanced", open=False, elem_id="advanced_tab"):
+            acc_advanced = gr.Accordion("Advanced", open=False, elem_id="advanced_tab")
+            accordions.append(acc_advanced)
+            with acc_advanced:
                 advanced_training = AdvancedTraining(headless=headless, config=config)
                 advanced_training.color_aug.change(
                     color_aug_changed,
@@ -1245,11 +1272,15 @@ def dreambooth_tab(
                     outputs=[basic_training.cache_latents],
                 )
 
-            with gr.Accordion("Samples", open=False, elem_id="samples_tab"):
+            acc_samples = gr.Accordion("Samples", open=False, elem_id="samples_tab")
+            accordions.append(acc_samples)
+            with acc_samples:
                 sample = SampleImages(config=config)
 
             global huggingface
-            with gr.Accordion("HuggingFace", open=False):
+            acc_huggingface = gr.Accordion("HuggingFace", open=False)
+            accordions.append(acc_huggingface)
+            with acc_huggingface:
                 huggingface = HuggingFace(config=config)
 
         global executor
@@ -1482,6 +1513,25 @@ def dreambooth_tab(
         button_print.click(
             train_model,
             inputs=[dummy_headless] + [dummy_db_true] + settings_list,
+            show_progress=False,
+        )
+
+        def open_all_accordions_func():
+             return [gr.Accordion(open=True) for _ in accordions]
+        
+        def close_all_accordions_func():
+             return [gr.Accordion(open=False) for _ in accordions]
+
+        open_all_accordions.click(
+            fn=open_all_accordions_func,
+            inputs=[],
+            outputs=accordions,
+            show_progress=False,
+        )
+        close_all_accordions.click(
+            fn=close_all_accordions_func,
+            inputs=[],
+            outputs=accordions,
             show_progress=False,
         )
 

@@ -275,7 +275,7 @@ def gradio_manual_caption_gui_tab(headless=False, default_images_dir=None):
         with gr.Group(), gr.Row():
             images_dir = gr.Dropdown(
                 label="Image folder to caption (containing the images to caption)",
-                choices=[""] + list_images_dirs(default_images_dir),
+                choices=[(c, c) for c in [""] + list_images_dirs(default_images_dir)],
                 value="",
                 interactive=True,
                 allow_custom_value=True,
@@ -283,7 +283,7 @@ def gradio_manual_caption_gui_tab(headless=False, default_images_dir=None):
             create_refresh_button(
                 images_dir,
                 lambda: None,
-                lambda: {"choices": list_images_dirs(current_images_dir)},
+                lambda: {"choices": [(c, c) for c in list_images_dirs(current_images_dir)]},
                 "open_folder_small",
             )
             folder_button = gr.Button(
@@ -310,7 +310,7 @@ def gradio_manual_caption_gui_tab(headless=False, default_images_dir=None):
             )
 
             images_dir.change(
-                fn=lambda path: gr.Dropdown(choices=[""] + list_images_dirs(path)),
+                fn=lambda path: gr.Dropdown(choices=[(c, c) for c in [""] + list_images_dirs(path)]),
                 inputs=images_dir,
                 outputs=images_dir,
                 show_progress=False,

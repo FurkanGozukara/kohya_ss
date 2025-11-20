@@ -1851,13 +1851,27 @@ def lora_tab(
         gr.Markdown(
             "Train a custom model using kohya train network LoRA python code..."
         )
+        
+        # Button to open/close all accordions
+        with gr.Row():
+            open_all_accordions = gr.Button("Open all accordions", elem_id="open_all_accordions", size="sm")
+            close_all_accordions = gr.Button("Close all accordions", elem_id="close_all_accordions", size="sm")
+        
+        accordions = []
 
         # Setup Configuration Files Gradio
-        with gr.Accordion("Configuration", open=False):
+        acc_configuration = gr.Accordion("Configuration", open=False)
+        accordions.append(acc_configuration)
+        with acc_configuration:
             configuration = ConfigurationFile(headless=headless, config=config)
 
-        with gr.Accordion("Accelerate launch", open=False), gr.Column():
+        acc_accelerate_launch = gr.Accordion("Accelerate launch", open=False)
+        accordions.append(acc_accelerate_launch)
+        with acc_accelerate_launch, gr.Column():
             accelerate_launch = AccelerateLaunch(config=config)
+            accordions.append(accelerate_launch.acc_resource_selection)
+            accordions.append(accelerate_launch.acc_hardware_selection)
+            accordions.append(accelerate_launch.acc_distributed_gpus)
 
         with gr.Column():
             source_model = SourceModel(
@@ -1868,14 +1882,21 @@ def lora_tab(
                 headless=headless,
                 config=config,
             )
+            accordions.append(source_model.acc_model)
 
-            with gr.Accordion("Folders", open=True), gr.Group():
+            acc_folders = gr.Accordion("Folders", open=True)
+            accordions.append(acc_folders)
+            with acc_folders, gr.Group():
                 folders = Folders(headless=headless, config=config)
 
-        with gr.Accordion("Metadata", open=False), gr.Group():
+        acc_metadata = gr.Accordion("Metadata", open=False)
+        accordions.append(acc_metadata)
+        with acc_metadata, gr.Group():
             metadata = MetaData(config=config)
 
-        with gr.Accordion("Dataset Preparation", open=False):
+        acc_dataset_preparation = gr.Accordion("Dataset Preparation", open=False)
+        accordions.append(acc_dataset_preparation)
+        with acc_dataset_preparation:
             gr.Markdown(
                 "This section provide Dreambooth tools to help setup your dataset..."
             )
@@ -1890,7 +1911,9 @@ def lora_tab(
 
             gradio_dataset_balancing_tab(headless=headless)
 
-        with gr.Accordion("Parameters", open=False), gr.Column():
+        acc_parameters = gr.Accordion("Parameters", open=False)
+        accordions.append(acc_parameters)
+        with acc_parameters, gr.Column():
 
             def list_presets(path):
                 json_files = []
@@ -1918,7 +1941,9 @@ def lora_tab(
                 elem_classes=["preset_background"],
             )
 
-            with gr.Accordion("Basic", open="True", elem_classes=["basic_background"]):
+            acc_basic = gr.Accordion("Basic", open="True", elem_classes=["basic_background"])
+            accordions.append(acc_basic)
+            with acc_basic:
                 with gr.Row():
                     LoRA_type = gr.Dropdown(
                         label="LoRA type",
@@ -3093,6 +3118,25 @@ def lora_tab(
         button_print.click(
             train_model,
             inputs=[dummy_headless] + [dummy_db_true] + settings_list,
+            show_progress=False,
+        )
+
+        def open_all_accordions_func():
+             return [gr.Accordion(open=True) for _ in accordions]
+        
+        def close_all_accordions_func():
+             return [gr.Accordion(open=False) for _ in accordions]
+
+        open_all_accordions.click(
+            fn=open_all_accordions_func,
+            inputs=[],
+            outputs=accordions,
+            show_progress=False,
+        )
+        close_all_accordions.click(
+            fn=close_all_accordions_func,
+            inputs=[],
+            outputs=accordions,
             show_progress=False,
         )
 

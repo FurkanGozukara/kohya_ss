@@ -60,7 +60,7 @@ class ConfigurationFile:
                 # Dropdown for selecting or entering the name of a configuration file.
                 self.config_file_name = gr.Dropdown(
                     label="Load/Save Config file",
-                    choices=[self.config.get("config_dir", "")] + self.list_config_dir(self.current_config_dir),
+                    choices=[(c, c) for c in [self.config.get("config_dir", "")] + self.list_config_dir(self.current_config_dir)],
                     value=self.config.get("config_dir", ""),
                     interactive=True,
                     allow_custom_value=True,
@@ -71,7 +71,7 @@ class ConfigurationFile:
                     self.config_file_name,
                     lambda: None,  # Placeholder for potential future functionality.
                     lambda: {
-                        "choices": [""] + self.list_config_dir(self.current_config_dir)
+                        "choices": [(c, c) for c in [""] + self.list_config_dir(self.current_config_dir)]
                     },
                     "open_folder_small",
                 )
@@ -96,7 +96,7 @@ class ConfigurationFile:
 
             # Handler for change events on the configuration file dropdown, allowing dynamic update of choices.
             self.config_file_name.change(
-                fn=lambda path: gr.Dropdown(choices=[""] + self.list_config_dir(path)),
+                fn=lambda path: gr.Dropdown(choices=[(c, c) for c in [""] + self.list_config_dir(path)]),
                 inputs=self.config_file_name,
                 outputs=self.config_file_name,
                 show_progress=False,

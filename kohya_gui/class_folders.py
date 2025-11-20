@@ -103,7 +103,7 @@ class Folders:
             # Output directory dropdown
             self.output_dir = gr.Dropdown(
                 label="Output directory for trained model",
-                choices=[self.config.get("folders.output_dir", "")] + self.list_output_dirs(self.current_output_dir),
+                choices=[(c, c) for c in [self.config.get("folders.output_dir", "")] + self.list_output_dirs(self.current_output_dir)],
                 value=self.config.get("folders.output_dir", ""),
                 interactive=True,
                 allow_custom_value=True,
@@ -113,7 +113,7 @@ class Folders:
                 self.output_dir,
                 lambda: None,
                 lambda: {
-                    "choices": [""] + self.list_output_dirs(self.current_output_dir)
+                    "choices": [(c, c) for c in [""] + self.list_output_dirs(self.current_output_dir)]
                 },
                 "open_folder_small",
             )
@@ -138,7 +138,7 @@ class Folders:
                     if not self.finetune
                     else "Train config directory (Optional. where config files will be saved)"
                 ),
-                choices=[self.config.get("folders.reg_data_dir", "")] + self.list_reg_data_dirs(self.current_reg_data_dir),
+                choices=[(c, c) for c in [self.config.get("folders.reg_data_dir", "")] + self.list_reg_data_dirs(self.current_reg_data_dir)],
                 value=self.config.get("folders.reg_data_dir", ""),
                 interactive=True,
                 allow_custom_value=True,
@@ -148,7 +148,7 @@ class Folders:
                 self.reg_data_dir,
                 lambda: None,
                 lambda: {
-                    "choices": [""] + self.list_reg_data_dirs(self.current_reg_data_dir)
+                    "choices": [(c, c) for c in [""] + self.list_reg_data_dirs(self.current_reg_data_dir)]
                 },
                 "open_folder_small",
             )
@@ -169,7 +169,7 @@ class Folders:
             # Logging directory dropdown
             self.logging_dir = gr.Dropdown(
                 label="Logging directory (Optional. to enable logging and output Tensorboard log)",
-                choices=[self.config.get("folders.logging_dir", "")] + self.list_logging_dirs(self.current_logging_dir),
+                choices=[(c, c) for c in [self.config.get("folders.logging_dir", "")] + self.list_logging_dirs(self.current_logging_dir)],
                 value=self.config.get("folders.logging_dir", ""),
                 interactive=True,
                 allow_custom_value=True,
@@ -179,7 +179,7 @@ class Folders:
                 self.logging_dir,
                 lambda: None,
                 lambda: {
-                    "choices": [""] + self.list_logging_dirs(self.current_logging_dir)
+                    "choices": [(c, c) for c in [""] + self.list_logging_dirs(self.current_logging_dir)]
                 },
                 "open_folder_small",
             )
@@ -199,7 +199,7 @@ class Folders:
 
             # Change event for output directory dropdown
             self.output_dir.change(
-                fn=lambda path: gr.Dropdown(choices=[""] + self.list_output_dirs(path)),
+                fn=lambda path: gr.Dropdown(choices=[(c, c) for c in [""] + self.list_output_dirs(path)]),
                 inputs=self.output_dir,
                 outputs=self.output_dir,
                 show_progress=False,
@@ -207,7 +207,7 @@ class Folders:
             # Change event for regularisation directory dropdown
             self.reg_data_dir.change(
                 fn=lambda path: gr.Dropdown(
-                    choices=[""] + self.list_reg_data_dirs(path)
+                    choices=[(c, c) for c in [""] + self.list_reg_data_dirs(path)]
                 ),
                 inputs=self.reg_data_dir,
                 outputs=self.reg_data_dir,
@@ -216,7 +216,7 @@ class Folders:
             # Change event for logging directory dropdown
             self.logging_dir.change(
                 fn=lambda path: gr.Dropdown(
-                    choices=[""] + self.list_logging_dirs(path)
+                    choices=[(c, c) for c in [""] + self.list_logging_dirs(path)]
                 ),
                 inputs=self.logging_dir,
                 outputs=self.logging_dir,

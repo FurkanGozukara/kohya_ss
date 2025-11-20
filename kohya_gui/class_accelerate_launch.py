@@ -16,7 +16,8 @@ class AccelerateLaunch:
     ) -> None:
         self.config = config
 
-        with gr.Accordion("Resource Selection", open=True):
+        self.acc_resource_selection = gr.Accordion("Resource Selection", open=True)
+        with self.acc_resource_selection:
             with gr.Row():
                 self.mixed_precision = gr.Dropdown(
                     label="Mixed precision",
@@ -96,14 +97,16 @@ class AccelerateLaunch:
                     info="Whether to enable dynamic shape tracing.",
                 )
 
-        with gr.Accordion("Hardware Selection", open=True):
+        self.acc_hardware_selection = gr.Accordion("Hardware Selection", open=True)
+        with self.acc_hardware_selection:
             with gr.Row():
                 self.multi_gpu = gr.Checkbox(
                     label="Multi GPU",
                     value=self.config.get("accelerate_launch.multi_gpu", False),
                     info="Whether or not this should launch a distributed GPU training.",
                 )
-        with gr.Accordion("Distributed GPUs", open=True):
+        self.acc_distributed_gpus = gr.Accordion("Distributed GPUs", open=True)
+        with self.acc_distributed_gpus:
             with gr.Row():
                 self.gpu_ids = gr.Textbox(
                     label="GPU IDs",

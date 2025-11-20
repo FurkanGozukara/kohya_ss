@@ -1212,31 +1212,52 @@ def finetune_tab(
 
     with gr.Tab("Training"), gr.Column(variant="compact"):
         gr.Markdown("Train a custom model using kohya finetune python code...")
+        
+        # Button to open/close all accordions
+        with gr.Row():
+            open_all_accordions = gr.Button("Open all accordions", elem_id="open_all_accordions", size="sm")
+            close_all_accordions = gr.Button("Close all accordions", elem_id="close_all_accordions", size="sm")
+        
+        accordions = []
 
         # Setup Configuration Files Gradio
-        with gr.Accordion("Configuration", open=False):
+        acc_configuration = gr.Accordion("Configuration", open=False)
+        accordions.append(acc_configuration)
+        with acc_configuration:
             configuration = ConfigurationFile(headless=headless, config=config)
 
-        with gr.Accordion("Accelerate launch", open=False), gr.Column():
+        acc_accelerate_launch = gr.Accordion("Accelerate launch", open=False)
+        accordions.append(acc_accelerate_launch)
+        with acc_accelerate_launch, gr.Column():
             accelerate_launch = AccelerateLaunch(config=config)
+            accordions.append(accelerate_launch.acc_resource_selection)
+            accordions.append(accelerate_launch.acc_hardware_selection)
+            accordions.append(accelerate_launch.acc_distributed_gpus)
 
         with gr.Column():
             source_model = SourceModel(
                 headless=headless, finetuning=True, config=config
             )
+            accordions.append(source_model.acc_model)
             image_folder = source_model.train_data_dir
             output_name = source_model.output_name
 
-        with gr.Accordion("Folders", open=False), gr.Group():
+        acc_folders = gr.Accordion("Folders", open=False)
+        accordions.append(acc_folders)
+        with acc_folders, gr.Group():
             folders = Folders(headless=headless, finetune=True, config=config)
             output_dir = folders.output_dir
             logging_dir = folders.logging_dir
             train_dir = folders.reg_data_dir
 
-        with gr.Accordion("Metadata", open=False), gr.Group():
+        acc_metadata = gr.Accordion("Metadata", open=False)
+        accordions.append(acc_metadata)
+        with acc_metadata, gr.Group():
             metadata = MetaData(config=config)
 
-        with gr.Accordion("Dataset Preparation", open=False):
+        acc_dataset_preparation = gr.Accordion("Dataset Preparation", open=False)
+        accordions.append(acc_dataset_preparation)
+        with acc_dataset_preparation:
             with gr.Row():
                 max_resolution = gr.Textbox(
                     label="Resolution (width,height)", value="512,512"
@@ -1261,7 +1282,9 @@ def finetune_tab(
                     ],
                     value="Yes",
                 )
-            with gr.Accordion("Advanced parameters", open=False):
+            acc_advanced_parameters = gr.Accordion("Advanced parameters", open=False)
+            accordions.append(acc_advanced_parameters)
+            with acc_advanced_parameters:
                 with gr.Row():
                     caption_metadata_filename = gr.Textbox(
                         label="Caption metadata filename",
@@ -1276,7 +1299,9 @@ def finetune_tab(
                         label="Weighted captions", value=False
                     )
 
-        with gr.Accordion("Parameters", open=False), gr.Column():
+        acc_parameters = gr.Accordion("Parameters", open=False)
+        accordions.append(acc_parameters)
+        with acc_parameters, gr.Column():
 
             def list_presets(path):
                 json_files = []
@@ -1301,7 +1326,9 @@ def finetune_tab(
                 value="none",
             )
 
-            with gr.Accordion("Basic", open="True"):
+            acc_basic = gr.Accordion("Basic", open="True")
+            accordions.append(acc_basic)
+            with acc_basic:
                 with gr.Group(elem_id="basic_tab"):
                     basic_training = BasicTraining(
                         learning_rate_value=1e-5,
@@ -1336,7 +1363,9 @@ def finetune_tab(
                 headless=headless, config=config, sd3_checkbox=source_model.sd3_checkbox
             )
 
-            with gr.Accordion("Advanced", open=False, elem_id="advanced_tab"):
+            acc_advanced = gr.Accordion("Advanced", open=False, elem_id="advanced_tab")
+            accordions.append(acc_advanced)
+            with acc_advanced:
                 with gr.Row():
                     gradient_accumulation_steps = gr.Slider(
                         label="Gradient accumulate steps",
@@ -1362,11 +1391,15 @@ def finetune_tab(
                     ],  # Not applicable to fine_tune.py
                 )
 
-            with gr.Accordion("Samples", open=False, elem_id="samples_tab"):
+            acc_samples = gr.Accordion("Samples", open=False, elem_id="samples_tab")
+            accordions.append(acc_samples)
+            with acc_samples:
                 sample = SampleImages(config=config)
 
             global huggingface
-            with gr.Accordion("HuggingFace", open=False):
+            acc_huggingface = gr.Accordion("HuggingFace", open=False)
+            accordions.append(acc_huggingface)
+            with acc_huggingface:
                 huggingface = HuggingFace(config=config)
 
         global executor
@@ -1633,6 +1666,25 @@ def finetune_tab(
         #    outputs=[config.config_file_name],
         #    show_progress=False,
         # )
+
+        def open_all_accordions_func():
+             return [gr.Accordion(open=True) for _ in accordions]
+        
+        def close_all_accordions_func():
+             return [gr.Accordion(open=False) for _ in accordions]
+
+        open_all_accordions.click(
+            fn=open_all_accordions_func,
+            inputs=[],
+            outputs=accordions,
+            show_progress=False,
+        )
+        close_all_accordions.click(
+            fn=close_all_accordions_func,
+            inputs=[],
+            outputs=accordions,
+            show_progress=False,
+        )
 
     with gr.Tab("Guides"):
         gr.Markdown("This section provide Various Finetuning guides and information...")

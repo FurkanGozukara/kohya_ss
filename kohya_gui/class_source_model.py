@@ -99,7 +99,8 @@ class SourceModel:
                 list_files(current_dataset_config_dir, exts=[".toml"], all=True)
             )
 
-        with gr.Accordion("Model", open=True):
+        self.acc_model = gr.Accordion("Model", open=True)
+        with self.acc_model:
             with gr.Column(), gr.Group():
                 model_ext = gr.Textbox(value="*.safetensors *.ckpt", visible=False)
                 model_ext_name = gr.Textbox(value="Model types", visible=False)
@@ -110,7 +111,7 @@ class SourceModel:
                         self.model_list = gr.Textbox(visible=False, value="")
                         self.pretrained_model_name_or_path = gr.Dropdown(
                             label="Pretrained model name or path",
-                            choices=default_models + model_checkpoints,
+                            choices=[(c, c) for c in default_models + model_checkpoints],
                             value=self.config.get("model.models_dir", "runwayml/stable-diffusion-v1-5"),
                             allow_custom_value=True,
                             visible=True,
@@ -119,7 +120,7 @@ class SourceModel:
                         create_refresh_button(
                             self.pretrained_model_name_or_path,
                             lambda: None,
-                            lambda: {"choices": list_models(self.current_models_dir)},
+                            lambda: {"choices": [(c, c) for c in list_models(self.current_models_dir)]},
                             "open_folder_small",
                         )
 
@@ -163,8 +164,7 @@ class SourceModel:
                                 if not finetuning
                                 else "Image folder (containing training images)"
                             ),
-                            choices=[""]
-                            + list_train_data_dirs(self.current_train_data_dir),
+                            choices=[(c, c) for c in [""] + list_train_data_dirs(self.current_train_data_dir)],
                             value=self.config.get("model.train_data_dir", ""),
                             interactive=True,
                             allow_custom_value=True,
@@ -173,8 +173,7 @@ class SourceModel:
                             self.train_data_dir,
                             lambda: None,
                             lambda: {
-                                "choices": [""]
-                                + list_train_data_dirs(self.current_train_data_dir)
+                                "choices": [(c, c) for c in [""] + list_train_data_dirs(self.current_train_data_dir)]
                             },
                             "open_folder_small",
                         )
@@ -193,8 +192,7 @@ class SourceModel:
                         # Toml directory dropdown
                         self.dataset_config = gr.Dropdown(
                             label="Dataset config file (Optional. Select the toml configuration file to use for the dataset)",
-                            choices=[self.config.get("model.dataset_config", "")]
-                            + list_dataset_config_dirs(self.current_dataset_config_dir),
+                            choices=[(c, c) for c in [self.config.get("model.dataset_config", "")] + list_dataset_config_dirs(self.current_dataset_config_dir)],
                             value=self.config.get("model.dataset_config", ""),
                             interactive=True,
                             allow_custom_value=True,
@@ -204,10 +202,7 @@ class SourceModel:
                             self.dataset_config,
                             lambda: None,
                             lambda: {
-                                "choices": [""]
-                                + list_dataset_config_dirs(
-                                    self.current_dataset_config_dir
-                                )
+                                "choices": [(c, c) for c in [""] + list_dataset_config_dirs(self.current_dataset_config_dir)]
                             },
                             "open_folder_small",
                         )
@@ -233,7 +228,7 @@ class SourceModel:
                         # Change event for dataset_config directory dropdown
                         self.dataset_config.change(
                             fn=lambda path: gr.Dropdown(
-                                choices=[""] + list_dataset_config_dirs(path)
+                                choices=[(c, c) for c in [""] + list_dataset_config_dirs(path)]
                             ),
                             inputs=self.dataset_config,
                             outputs=self.dataset_config,
@@ -370,7 +365,7 @@ class SourceModel:
 
                 self.train_data_dir.change(
                     fn=lambda path: gr.Dropdown(
-                        choices=[""] + list_train_data_dirs(path)
+                        choices=[(c, c) for c in [""] + list_train_data_dirs(path)]
                     ),
                     inputs=self.train_data_dir,
                     outputs=self.train_data_dir,

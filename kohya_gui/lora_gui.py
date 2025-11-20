@@ -1854,8 +1854,8 @@ def lora_tab(
         
         # Button to open/close all accordions
         with gr.Row():
-            open_all_accordions = gr.Button("Open all accordions", elem_id="open_all_accordions", size="sm")
-            close_all_accordions = gr.Button("Close all accordions", elem_id="close_all_accordions", size="sm")
+            open_all_accordions = gr.Button("Open All Sections", elem_id="open_all_accordions", size="lg")
+            close_all_accordions = gr.Button("Close all accordions", elem_id="close_all_accordions", size="lg")
         
         accordions = []
 
@@ -2704,9 +2704,11 @@ def lora_tab(
                 headless=headless, config=config, sd3_checkbox=source_model.sd3_checkbox
             )
 
-            with gr.Accordion(
+            acc_advanced = gr.Accordion(
                 "Advanced", open=False, elem_classes="advanced_background"
-            ):
+            )
+            accordions.append(acc_advanced)
+            with acc_advanced:
                 # with gr.Accordion('Advanced Configuration', open=False):
                 with gr.Row(visible=True) as kohya_advanced_lora:
                     with gr.Tab(label="Weights"):
@@ -2764,13 +2766,17 @@ def lora_tab(
                     outputs=[basic_training.cache_latents],
                 )
 
-            with gr.Accordion("Samples", open=False, elem_classes="samples_background"):
+            acc_samples = gr.Accordion("Samples", open=False, elem_classes="samples_background")
+            accordions.append(acc_samples)
+            with acc_samples:
                 sample = SampleImages(config=config)
 
             global huggingface
-            with gr.Accordion(
+            acc_huggingface = gr.Accordion(
                 "HuggingFace", open=False, elem_classes="huggingface_background"
-            ):
+            )
+            accordions.append(acc_huggingface)
+            with acc_huggingface:
                 huggingface = HuggingFace(config=config)
             
             LoRA_type.change(

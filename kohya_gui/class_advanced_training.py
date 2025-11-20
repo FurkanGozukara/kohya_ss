@@ -258,6 +258,19 @@ class AdvancedTraining:
                 info="Flux can be trained with fp8, and CLIP-L can be trained with bf16/fp16.",
                 value=self.config.get("advanced.fp8_base_unet", False),
             )
+            self.fp8_scaled = gr.Checkbox(
+                label="fp8 scaled",
+                info="Use scaled fp8 for model (VRAM reduction, works with block swap/torch compile)",
+                value=self.config.get("advanced.fp8_scaled", False),
+            )
+            # fp8_fast hidden from UI as it provides no benefit on RTX 40/50 series
+            # Kept for backward compatibility with saved configs
+            self.fp8_fast = gr.Checkbox(
+                label="fp8 fast",
+                info="Enable fast FP8 arithmetic (RTX 4XXX+, only with fp8_scaled)",
+                value=self.config.get("advanced.fp8_fast", False),
+                visible=False,  # Hidden - no measurable benefit
+            )
             self.full_fp16 = gr.Checkbox(
                 label="Full fp16 training (experimental)",
                 value=self.config.get("advanced.full_fp16", False),

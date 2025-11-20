@@ -2788,6 +2788,7 @@ def lora_tab(
                 advanced_training = AdvancedTraining(
                     headless=headless, training_type="lora", config=config
                 )
+                accordions.append(advanced_training.acc_torch_compile)
                 advanced_training.color_aug.change(
                     color_aug_changed,
                     inputs=[advanced_training.color_aug],

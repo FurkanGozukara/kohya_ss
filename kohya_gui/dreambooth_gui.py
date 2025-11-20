@@ -1294,6 +1294,7 @@ def dreambooth_tab(
             accordions.append(acc_advanced)
             with acc_advanced:
                 advanced_training = AdvancedTraining(headless=headless, config=config)
+                accordions.append(advanced_training.acc_torch_compile)
                 advanced_training.color_aug.change(
                     color_aug_changed,
                     inputs=[advanced_training.color_aug],

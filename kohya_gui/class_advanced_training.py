@@ -338,7 +338,8 @@ class AdvancedTraining:
             )
         
         # Torch Compile Settings
-        with gr.Accordion("Torch Compile Settings", open=False):
+        self.acc_torch_compile = gr.Accordion("Torch Compile Settings", open=False)
+        with self.acc_torch_compile:
             gr.Markdown(
                 "⚠️ **Important**: torch.compile is incompatible with gradient checkpointing. "
                 "For speedup, disable gradient checkpointing below. "

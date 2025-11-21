@@ -691,6 +691,11 @@ def train_model(
     parameters = list(locals().items())
     global train_state_value
 
+    # Define sdxl for backward compatibility with the rest of the code
+    sdxl = sdxl_checkbox
+    sd3 = sd3_checkbox
+    flux1 = flux1_checkbox
+
     TRAIN_BUTTON_VISIBLE = [
         gr.Button(visible=True),
         gr.Button(visible=False or headless),

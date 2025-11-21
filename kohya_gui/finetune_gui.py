@@ -1252,7 +1252,7 @@ def finetune_tab(
         # Button to open/close all accordions
         with gr.Row():
             open_all_accordions = gr.Button("Open all accordions", elem_id="open_all_accordions", size="sm")
-            close_all_accordions = gr.Button("Close all accordions", elem_id="close_all_accordions", size="sm")
+            close_all_accordions = gr.Button("Close All Sections", elem_id="close_all_accordions", size="sm")
         
         accordions = []
 

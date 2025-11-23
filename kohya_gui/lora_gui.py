@@ -270,6 +270,7 @@ def save_configuration(
     # Flux1
     flux1_cache_text_encoder_outputs,
     flux1_cache_text_encoder_outputs_to_disk,
+    flux1_cache_text_encoder_outputs_on_cpu,
     ae,
     clip_l,
     t5xxl,
@@ -567,6 +568,7 @@ def open_configuration(
     # Flux1
     flux1_cache_text_encoder_outputs,
     flux1_cache_text_encoder_outputs_to_disk,
+    flux1_cache_text_encoder_outputs_on_cpu,
     ae,
     clip_l,
     t5xxl,
@@ -955,6 +957,7 @@ def train_model(
     # Flux1
     flux1_cache_text_encoder_outputs,
     flux1_cache_text_encoder_outputs_to_disk,
+    flux1_cache_text_encoder_outputs_on_cpu,
     ae,
     clip_l,
     t5xxl,
@@ -1792,6 +1795,9 @@ def train_model(
         "guidance_scale": float(guidance_scale) if flux1_checkbox else None,
         "mem_eff_save": mem_eff_save if flux1_checkbox else None,
         "apply_t5_attn_mask": apply_t5_attn_mask if flux1_checkbox else None,
+        "cache_text_encoder_outputs_on_cpu": (
+            flux1_cache_text_encoder_outputs_on_cpu if flux1_checkbox else None
+        ),
         "cpu_offload_checkpointing": (
             cpu_offload_checkpointing if flux1_checkbox else None
         ),
@@ -3056,6 +3062,7 @@ def lora_tab(
             # Flux1 parameters
             flux1_training.flux1_cache_text_encoder_outputs,
             flux1_training.flux1_cache_text_encoder_outputs_to_disk,
+            flux1_training.flux1_cache_text_encoder_outputs_on_cpu,
             flux1_training.ae,
             flux1_training.clip_l,
             flux1_training.t5xxl,

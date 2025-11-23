@@ -194,6 +194,14 @@ class flux1Training:
                         info="Cache text encoder outputs to disk to speed up inference",
                         interactive=True,
                     )
+                    self.flux1_cache_text_encoder_outputs_on_cpu = gr.Checkbox(
+                        label="Cache TE Outputs on CPU",
+                        value=self.config.get("flux1.cache_text_encoder_outputs_on_cpu", False),
+                        info="Cache T5 text encoder outputs on CPU to reduce VRAM usage during caching",
+                        interactive=True,
+                    )
+
+                with gr.Row():
                     self.mem_eff_save = gr.Checkbox(
                         label="Memory Efficient Save",
                         value=self.config.get("flux1.mem_eff_save", False),

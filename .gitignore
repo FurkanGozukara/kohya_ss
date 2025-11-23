@@ -19,6 +19,7 @@ cudnn_windows
 
 # Scripts and executables
 locon
+.vs
 gui-user.bat
 gui-user.ps1
 musubi-tuner

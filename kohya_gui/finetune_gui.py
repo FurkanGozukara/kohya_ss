@@ -227,6 +227,7 @@ def save_configuration(
     # Flux.1
     flux1_cache_text_encoder_outputs,
     flux1_cache_text_encoder_outputs_to_disk,
+    flux1_cache_text_encoder_outputs_on_cpu,
     ae,
     flux1_clip_l,
     flux1_t5xxl,
@@ -452,6 +453,7 @@ def open_configuration(
     # Flux.1
     flux1_cache_text_encoder_outputs,
     flux1_cache_text_encoder_outputs_to_disk,
+    flux1_cache_text_encoder_outputs_on_cpu,
     ae,
     flux1_clip_l,
     flux1_t5xxl,
@@ -683,6 +685,7 @@ def train_model(
     # Flux.1
     flux1_cache_text_encoder_outputs,
     flux1_cache_text_encoder_outputs_to_disk,
+    flux1_cache_text_encoder_outputs_on_cpu,
     ae,
     flux1_clip_l,
     flux1_t5xxl,
@@ -1158,6 +1161,9 @@ def train_model(
         "double_blocks_to_swap": double_blocks_to_swap if flux1_checkbox else None,
         "mem_eff_save": mem_eff_save if flux1_checkbox else None,
         "apply_t5_attn_mask": apply_t5_attn_mask if flux1_checkbox else None,
+        "cache_text_encoder_outputs_on_cpu": (
+            flux1_cache_text_encoder_outputs_on_cpu if flux1_checkbox else None
+        ),
         # Torch compile parameters (for SDXL and FLUX)
         "compile": compile if (sdxl or flux1_checkbox) else None,
         "compile_backend": compile_backend if compile and (sdxl or flux1_checkbox) else None,
@@ -1609,6 +1615,7 @@ def finetune_tab(
             # Flux1 parameters
             flux1_training.flux1_cache_text_encoder_outputs,
             flux1_training.flux1_cache_text_encoder_outputs_to_disk,
+            flux1_training.flux1_cache_text_encoder_outputs_on_cpu,
             flux1_training.ae,
             flux1_training.clip_l,
             flux1_training.t5xxl,

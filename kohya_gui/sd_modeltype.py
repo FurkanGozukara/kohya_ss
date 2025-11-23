@@ -21,13 +21,14 @@ class SDModelType:
         if not isfile(safetensors_path):
             return
 
-        # Filename-based FLUX1 recognition for specific model files
+        # Filename-based FLUX1 recognition for files with "flux" in the name
         filename = safetensors_path.lower()
-        if ("flux_krea_dev.safetensors" in filename or
-            "flux-srpo-bf16.safetensors" in filename or
-            "flux1-krea-dev.safetensors" in filename):
-            self.model_type = ModelType.FLUX1
-            return
+        # Check if "flux" appears in the filename (more flexible pattern matching)
+        if "flux" in filename and ".safetensors" in filename:
+            # Additional patterns to verify it's likely a FLUX model
+            if any(pattern in filename for pattern in ["flux1", "flux_", "flux-", "flux_dev", "flux_schnell"]):
+                self.model_type = ModelType.FLUX1
+                return
 
         try:
             st = safe_open(filename=safetensors_path, framework="numpy", device="cpu")
@@ -52,7 +53,9 @@ class SDModelType:
                 self.model_type = ModelType.SD2
             elif hasKeyPrefix("model."):
                 self.model_type = ModelType.SD1
-        except:
+        except Exception as e:
+            # If file reading fails, try to log the error for debugging
+            # print(f"Error reading safetensors file: {e}")
             pass
         
         # print(f"Model type: {self.model_type}")

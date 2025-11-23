@@ -366,9 +366,8 @@ class AdvancedTraining:
         self.acc_torch_compile = gr.Accordion("Torch Compile Settings", open=False)
         with self.acc_torch_compile:
             gr.Markdown(
-                "⚠️ **Important**: torch.compile is incompatible with gradient checkpointing. "
-                "For speedup, disable gradient checkpointing below. "
-                "Choose ONE: compile (speed) OR checkpointing (memory)."
+                "⚠️ **Important**: If you get errors with torch.compile just disable it but it should work out of box with 0-Trade-off. "
+                "It increases speed and slightly reduces VRAM with 0 quality loss."
             )
             with gr.Row():
                 self.compile = gr.Checkbox(

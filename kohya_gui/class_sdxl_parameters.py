@@ -51,6 +51,17 @@ class SDXLParameters:
                     info="Disable memory mapping when loading the model's .safetensors in SDXL.",
                     value=self.config.get("sdxl.disable_mmap_load_safetensors", False),
                 )
+            
+            with gr.Row(visible=self.trainer == "finetune" or self.trainer == "dreambooth"):
+                self.sdxl_blocks_to_swap = gr.Slider(
+                    label="Transformer blocks to swap",
+                    value=self.config.get("sdxl.blocks_to_swap", 0),
+                    info="Number of transformer blocks to swap between CPU and GPU using OneTrainer-style backward hooks. SDXL has ~70 transformer blocks. Recommended: 10-40 (0=disabled). Higher values = more VRAM savings but slower training. Works with or without fused_backward_pass.",
+                    minimum=0,
+                    maximum=68,
+                    step=1,
+                    interactive=True,
+                )
 
                 self.fused_backward_pass.change(
                     lambda fused_backward_pass: gr.Number(

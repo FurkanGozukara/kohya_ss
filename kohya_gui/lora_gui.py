@@ -205,6 +205,7 @@ def save_configuration(
     # sdxl parameters section
     sdxl_cache_text_encoder_outputs,
     sdxl_no_half_vae,
+    sdxl_blocks_to_swap,
     ###
     text_encoder_lr,
     t5xxl_lr,
@@ -503,6 +504,7 @@ def open_configuration(
     # sdxl parameters section
     sdxl_cache_text_encoder_outputs,
     sdxl_no_half_vae,
+    sdxl_blocks_to_swap,
     ###
     text_encoder_lr,
     t5xxl_lr,
@@ -892,6 +894,7 @@ def train_model(
     # sdxl parameters section
     sdxl_cache_text_encoder_outputs,
     sdxl_no_half_vae,
+    sdxl_blocks_to_swap,
     ###
     text_encoder_lr,
     t5xxl_lr,
@@ -1801,7 +1804,10 @@ def train_model(
         "cpu_offload_checkpointing": (
             cpu_offload_checkpointing if flux1_checkbox else None
         ),
-        "blocks_to_swap": blocks_to_swap if flux1_checkbox or sd3_checkbox else None,
+        "blocks_to_swap": (
+            blocks_to_swap if flux1_checkbox or sd3_checkbox else 
+            sdxl_blocks_to_swap if sdxl else None
+        ),
         "single_blocks_to_swap": single_blocks_to_swap if flux1_checkbox else None,
         "double_blocks_to_swap": double_blocks_to_swap if flux1_checkbox else None,
         # Torch compile parameters (for SDXL and FLUX)
@@ -3000,6 +3006,7 @@ def lora_tab(
             advanced_training.debiased_estimation_loss,
             sdxl_params.sdxl_cache_text_encoder_outputs,
             sdxl_params.sdxl_no_half_vae,
+            sdxl_params.sdxl_blocks_to_swap,
             text_encoder_lr,
             t5xxl_lr,
             unet_lr,

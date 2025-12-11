@@ -191,6 +191,7 @@ def save_configuration(
     fused_optimizer_groups,
     sdxl_cache_text_encoder_outputs,
     sdxl_no_half_vae,
+    sdxl_blocks_to_swap,
     min_timestep,
     max_timestep,
     debiased_estimation_loss,
@@ -417,6 +418,7 @@ def open_configuration(
     fused_optimizer_groups,
     sdxl_cache_text_encoder_outputs,
     sdxl_no_half_vae,
+    sdxl_blocks_to_swap,
     min_timestep,
     max_timestep,
     debiased_estimation_loss,
@@ -649,6 +651,7 @@ def train_model(
     fused_optimizer_groups,
     sdxl_cache_text_encoder_outputs,
     sdxl_no_half_vae,
+    sdxl_blocks_to_swap,
     min_timestep,
     max_timestep,
     debiased_estimation_loss,
@@ -1156,7 +1159,10 @@ def train_model(
         "cpu_offload_checkpointing": (
             cpu_offload_checkpointing if flux1_checkbox else None
         ),
-        "blocks_to_swap": blocks_to_swap if flux1_checkbox else None,
+        "blocks_to_swap": (
+            blocks_to_swap if flux1_checkbox else 
+            sdxl_blocks_to_swap if sdxl else None
+        ),
         "single_blocks_to_swap": single_blocks_to_swap if flux1_checkbox else None,
         "double_blocks_to_swap": double_blocks_to_swap if flux1_checkbox else None,
         "mem_eff_save": mem_eff_save if flux1_checkbox else None,
@@ -1579,6 +1585,7 @@ def finetune_tab(
             sdxl_params.fused_optimizer_groups,
             sdxl_params.sdxl_cache_text_encoder_outputs,
             sdxl_params.sdxl_no_half_vae,
+            sdxl_params.sdxl_blocks_to_swap,
             advanced_training.min_timestep,
             advanced_training.max_timestep,
             advanced_training.debiased_estimation_loss,

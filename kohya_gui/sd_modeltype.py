@@ -1,4 +1,4 @@
-from os.path import isfile
+from os.path import isfile, basename
 from safetensors import safe_open
 import enum
 
@@ -21,15 +21,7 @@ class SDModelType:
         if not isfile(safetensors_path):
             return
 
-        # Filename-based FLUX1 recognition for files with "flux" in the name
-        filename = safetensors_path.lower()
-        # Check if "flux" appears in the filename (more flexible pattern matching)
-        if "flux" in filename and ".safetensors" in filename:
-            # Additional patterns to verify it's likely a FLUX model
-            if any(pattern in filename for pattern in ["flux1", "flux_", "flux-", "flux_dev", "flux_schnell"]):
-                self.model_type = ModelType.FLUX1
-                return
-
+        # Always try architecture-based detection first (most reliable)
         try:
             st = safe_open(filename=safetensors_path, framework="numpy", device="cpu")
 
@@ -38,6 +30,7 @@ class SDModelType:
             def hasKeyPrefix(pfx):
                 return any(k.startswith(pfx) for k in st.keys())
 
+            # Check for specific model architectures by examining the keys
             if "model.diffusion_model.x_embedder.proj.weight" in st.keys():
                 self.model_type = ModelType.SD3
             elif (
@@ -57,6 +50,16 @@ class SDModelType:
             # If file reading fails, try to log the error for debugging
             # print(f"Error reading safetensors file: {e}")
             pass
+        
+        # Fallback: If architecture detection failed, try filename-based detection
+        # This is only used as a last resort when the file can't be read or keys are unexpected
+        if self.model_type == ModelType.UNKNOWN:
+            filename_only = basename(safetensors_path).lower()
+            # Check if "flux" appears in the filename
+            if "flux" in filename_only and ".safetensors" in filename_only:
+                # Additional patterns to verify it's likely a FLUX model
+                if any(pattern in filename_only for pattern in ["flux1", "flux_", "flux-", "flux_dev", "flux_schnell"]):
+                    self.model_type = ModelType.FLUX1
         
         # print(f"Model type: {self.model_type}")
 

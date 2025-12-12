@@ -177,26 +177,12 @@ class AccelerateLaunch:
                 run_cmd.append(shlex.quote(arg))
 
         # Handle GPU ID selection
-        # Accelerate has a validation bug: it rejects --gpu_ids when:
-        # - num_processes=1 AND only one GPU is specified
-        # Workaround: Don't pass --gpu_ids in this case, CUDA_VISIBLE_DEVICES will be used instead
+        # Always pass --gpu_ids when specified to override accelerate config file
+        # This prevents config file's "gpu_ids: all" from causing issues
         if "gpu_ids" in kwargs and kwargs.get("gpu_ids") != "":
             gpu_ids_value = kwargs.get("gpu_ids")
-            num_processes = int(kwargs.get("num_processes", 1))
-            multi_gpu = kwargs.get("multi_gpu", False)
-            
-            # Count number of GPUs specified
-            gpu_count = len(gpu_ids_value.split(",")) if "," in gpu_ids_value else 1
-            
-            # Only pass --gpu_ids if:
-            # - multi_gpu flag is set, OR
-            # - num_processes > 1, OR  
-            # - multiple GPU IDs specified (gpu_count > 1)
-            # Otherwise skip --gpu_ids and let executor set CUDA_VISIBLE_DEVICES
-            if multi_gpu or num_processes > 1 or gpu_count > 1:
-                run_cmd.append("--gpu_ids")
-                run_cmd.append(shlex.quote(gpu_ids_value))
-            # else: Single GPU case - will be handled via CUDA_VISIBLE_DEVICES in executor
+            run_cmd.append("--gpu_ids")
+            run_cmd.append(shlex.quote(gpu_ids_value))
 
         # Pass main_process_port when:
         # 1. Multi-GPU training (multi_gpu=True or num_processes > 1)

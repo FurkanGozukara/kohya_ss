@@ -203,11 +203,12 @@ class AccelerateLaunch:
         num_processes = int(kwargs.get("num_processes", 1))
         multi_gpu = kwargs.get("multi_gpu", False)
         
-        if (multi_gpu or num_processes > 1) and "main_process_port" in kwargs:
-            port_value = kwargs.get("main_process_port")
-            if port_value is not None:
-                run_cmd.append("--main_process_port")
-                run_cmd.append(str(int(port_value)))
+        if multi_gpu or num_processes > 1:
+            # For multi-GPU training, always pass main_process_port
+            # Default to 0 (auto-select) if not specified
+            port_value = kwargs.get("main_process_port", 0)
+            run_cmd.append("--main_process_port")
+            run_cmd.append(str(int(port_value)))
 
         if "mixed_precision" in kwargs and kwargs.get("mixed_precision"):
             run_cmd.append("--mixed_precision")

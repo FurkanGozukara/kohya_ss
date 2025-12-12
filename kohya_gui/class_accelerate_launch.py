@@ -198,14 +198,16 @@ class AccelerateLaunch:
                 run_cmd.append(shlex.quote(gpu_ids_value))
             # else: Single GPU case - will be handled via CUDA_VISIBLE_DEVICES in executor
 
-        # Only pass main_process_port for multi-GPU training
-        # For single GPU, the port is not needed and can cause issues
+        # Pass main_process_port when:
+        # 1. Multi-GPU training (multi_gpu=True or num_processes > 1)
+        # 2. Specific GPU ID is set (even for single GPU, accelerate may trigger multi-GPU launcher)
+        # Always default to 0 (auto-select available port) to avoid port conflicts
         num_processes = int(kwargs.get("num_processes", 1))
         multi_gpu = kwargs.get("multi_gpu", False)
+        gpu_ids = kwargs.get("gpu_ids", "")
         
-        if multi_gpu or num_processes > 1:
-            # For multi-GPU training, always pass main_process_port
-            # Default to 0 (auto-select) if not specified
+        # If multi-GPU OR specific GPU IDs are set, pass the port
+        if multi_gpu or num_processes > 1 or (gpu_ids and gpu_ids != ""):
             port_value = kwargs.get("main_process_port", 0)
             run_cmd.append("--main_process_port")
             run_cmd.append(str(int(port_value)))

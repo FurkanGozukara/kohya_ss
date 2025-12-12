@@ -139,7 +139,7 @@ class AccelerateLaunch:
                     step=1,
                     minimum=0,
                     maximum=65535,
-                    info="The port to use to communicate with the machine of rank 0.",
+                    info="The port to use to communicate with the machine of rank 0. Set to 0 to automatically use the next available port.",
                 )
         with gr.Row():
             self.extra_accelerate_launch_args = gr.Textbox(
@@ -198,7 +198,7 @@ class AccelerateLaunch:
                 run_cmd.append(shlex.quote(gpu_ids_value))
             # else: Single GPU case - will be handled via CUDA_VISIBLE_DEVICES in executor
 
-        if "main_process_port" in kwargs and kwargs.get("main_process_port", 0) > 0:
+        if "main_process_port" in kwargs and kwargs.get("main_process_port") is not None:
             run_cmd.append("--main_process_port")
             run_cmd.append(str(int(kwargs["main_process_port"])))
 

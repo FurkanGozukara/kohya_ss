@@ -198,9 +198,16 @@ class AccelerateLaunch:
                 run_cmd.append(shlex.quote(gpu_ids_value))
             # else: Single GPU case - will be handled via CUDA_VISIBLE_DEVICES in executor
 
-        if "main_process_port" in kwargs and kwargs.get("main_process_port") is not None:
-            run_cmd.append("--main_process_port")
-            run_cmd.append(str(int(kwargs["main_process_port"])))
+        # Only pass main_process_port for multi-GPU training
+        # For single GPU, the port is not needed and can cause issues
+        num_processes = int(kwargs.get("num_processes", 1))
+        multi_gpu = kwargs.get("multi_gpu", False)
+        
+        if (multi_gpu or num_processes > 1) and "main_process_port" in kwargs:
+            port_value = kwargs.get("main_process_port")
+            if port_value is not None:
+                run_cmd.append("--main_process_port")
+                run_cmd.append(str(int(port_value)))
 
         if "mixed_precision" in kwargs and kwargs.get("mixed_precision"):
             run_cmd.append("--mixed_precision")

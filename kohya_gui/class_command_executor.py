@@ -87,6 +87,16 @@ class CommandExecutor:
                                 run_cmd_list = list(run_cmd)
                                 run_cmd_list.pop(gpu_ids_idx)  # Remove --gpu_ids
                                 run_cmd_list.pop(gpu_ids_idx)  # Remove the value (now at same index)
+                                
+                                # Also remove --main_process_port for single GPU training
+                                # to prevent accelerate from entering multi-GPU launcher mode
+                                if '--main_process_port' in run_cmd_list:
+                                    port_idx = run_cmd_list.index('--main_process_port')
+                                    if port_idx + 1 < len(run_cmd_list):
+                                        run_cmd_list.pop(port_idx)  # Remove --main_process_port
+                                        run_cmd_list.pop(port_idx)  # Remove the port value
+                                        log.info("Removed --main_process_port for single GPU training")
+                                
                                 run_cmd = run_cmd_list
                                 
                                 # Update command display

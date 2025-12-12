@@ -46,6 +46,55 @@ class CommandExecutor:
             command_to_run = " ".join(run_cmd)
             log.info(f"Executing command: {command_to_run}")
 
+            # Handle single GPU via CUDA_VISIBLE_DEVICES environment variable
+            # This is needed because accelerate rejects --gpu_ids with single GPU + num_processes=1
+            env = kwargs.get('env', None)
+            if env is not None:
+                # Check if --gpu_ids is in the command but NOT --multi_gpu
+                # and num_processes is 1, then we should use CUDA_VISIBLE_DEVICES instead
+                try:
+                    if '--gpu_ids' in run_cmd:
+                        gpu_ids_idx = run_cmd.index('--gpu_ids')
+                        if gpu_ids_idx + 1 < len(run_cmd):
+                            gpu_ids_value = run_cmd[gpu_ids_idx + 1]
+                            
+                            # Check if this is single GPU case (no comma, not multi_gpu)
+                            has_multi_gpu = '--multi_gpu' in run_cmd
+                            has_comma = ',' in gpu_ids_value
+                            num_processes = 1  # default
+                            
+                            # Try to find num_processes value
+                            if '--num_processes' in run_cmd:
+                                proc_idx = run_cmd.index('--num_processes')
+                                if proc_idx + 1 < len(run_cmd):
+                                    try:
+                                        num_processes = int(run_cmd[proc_idx + 1])
+                                    except ValueError:
+                                        pass
+                            
+                            # If single GPU with single process and no multi_gpu flag
+                            if not has_multi_gpu and not has_comma and num_processes == 1:
+                                log.info(f"Detected single GPU training on GPU {gpu_ids_value}")
+                                log.info(f"Setting CUDA_VISIBLE_DEVICES={gpu_ids_value} instead of using --gpu_ids")
+                                
+                                # Set CUDA_VISIBLE_DEVICES in environment
+                                import os
+                                env = dict(env)  # Make a copy
+                                env['CUDA_VISIBLE_DEVICES'] = gpu_ids_value
+                                kwargs['env'] = env
+                                
+                                # Remove --gpu_ids from command
+                                run_cmd_list = list(run_cmd)
+                                run_cmd_list.pop(gpu_ids_idx)  # Remove --gpu_ids
+                                run_cmd_list.pop(gpu_ids_idx)  # Remove the value (now at same index)
+                                run_cmd = run_cmd_list
+                                
+                                # Update command display
+                                command_to_run = " ".join(run_cmd)
+                                log.info(f"Modified command: {command_to_run}")
+                except Exception as e:
+                    log.warning(f"Could not parse GPU settings, continuing with original command: {e}")
+
             # Execute the command securely
             self.process = subprocess.Popen(run_cmd, **kwargs)
             log.debug("Command executed.")

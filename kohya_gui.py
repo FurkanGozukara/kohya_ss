@@ -34,9 +34,9 @@ def initialize_ui_interface(config, headless, use_shell, release_info, readme_co
     # Create the main Gradio Blocks interface
     ui_interface = gr.Blocks(css=css, title=f"SECourses Premium Kohya GUI V39", theme=gr.themes.Default())
     with ui_interface:
-        gr.Markdown("## SECourses Premium Kohya GUI V35: https://www.patreon.com/posts/112099700")
+        gr.Markdown("## SECourses Premium Kohya GUI V37: https://www.patreon.com/posts/112099700")
         # Create tabs for different functionalities
-        with gr.Tab("Dreambooth"):
+        with gr.Tab("DreamBooth / Fine Tuning"):
             (
                 train_data_dir_input,
                 reg_data_dir_input,
@@ -47,8 +47,8 @@ def initialize_ui_interface(config, headless, use_shell, release_info, readme_co
             lora_tab(headless=headless, config=config, use_shell_flag=use_shell)
         with gr.Tab("Textual Inversion"):
             ti_tab(headless=headless, config=config, use_shell_flag=use_shell)
-        with gr.Tab("Finetuning"):
-            finetune_tab(headless=headless, config=config, use_shell_flag=use_shell)
+        # with gr.Tab("Finetuning"):
+        #     finetune_tab(headless=headless, config=config, use_shell_flag=use_shell)
         with gr.Tab("Utilities"):
             # Utilities tab requires inputs from the Dreambooth tab
             utilities_tab(

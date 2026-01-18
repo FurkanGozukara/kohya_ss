@@ -186,14 +186,16 @@ class AccelerateLaunch:
 
         # Pass main_process_port when:
         # 1. Multi-GPU training (multi_gpu=True or num_processes > 1)
-        # 2. Specific GPU ID is set (even for single GPU, accelerate may trigger multi-GPU launcher)
+        # 2. Multiple GPU IDs are specified (contains comma)
         # Always default to 0 (auto-select available port) to avoid port conflicts
         num_processes = int(kwargs.get("num_processes", 1))
         multi_gpu = kwargs.get("multi_gpu", False)
         gpu_ids = kwargs.get("gpu_ids", "")
-        
-        # If multi-GPU OR specific GPU IDs are set, pass the port
-        if multi_gpu or num_processes > 1 or (gpu_ids and gpu_ids != ""):
+
+        # Only add main_process_port for actual multi-GPU scenarios
+        # Single GPU with gpu_ids="0" should NOT trigger multi-GPU launcher
+        is_multi_gpu = multi_gpu or num_processes > 1 or (gpu_ids and "," in gpu_ids)
+        if is_multi_gpu:
             port_value = kwargs.get("main_process_port", 0)
             run_cmd.append("--main_process_port")
             run_cmd.append(str(int(port_value)))

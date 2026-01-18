@@ -6,6 +6,8 @@ __pycache__
 *.egg-info
 build
 wd14_tagger_model
+.claude/
+ComfyUI/
 
 # IDE and Editor specific
 .vscode

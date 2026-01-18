@@ -32,7 +32,7 @@ def initialize_ui_interface(config, headless, use_shell, release_info, readme_co
     css = read_file_content("./assets/style.css")
     
     # Create the main Gradio Blocks interface
-    ui_interface = gr.Blocks(css=css, title=f"SECourses Premium Kohya GUI V40", theme=gr.themes.Default())
+    ui_interface = gr.Blocks(css=css, title=f"SECourses Premium Kohya GUI V40.1", theme=gr.themes.Default())
     with ui_interface:
         gr.Markdown("## SECourses Premium Kohya GUI V40: https://www.patreon.com/posts/112099700")
         # Create tabs for different functionalities

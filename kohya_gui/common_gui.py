@@ -2,7 +2,7 @@ try:
     from tkinter import filedialog, Tk
 except ImportError:
     pass
-from easygui import msgbox, ynbox
+from easygui import msgbox as _msgbox_orig, ynbox as _ynbox_orig, boolbox as _boolbox_orig
 from typing import Optional
 from .custom_logging import setup_logging
 from .sd_modeltype import SDModelType
@@ -19,6 +19,43 @@ import toml
 
 # Set up logging
 log = setup_logging()
+
+
+# Safe wrappers for GUI dialogs that fallback to logging in headless environments
+def msgbox(msg, title="", *args, **kwargs):
+    """
+    Safe wrapper for easygui msgbox that falls back to logging if GUI is unavailable.
+    """
+    try:
+        return _msgbox_orig(msg=msg, title=title, *args, **kwargs)
+    except (RuntimeError, Exception) as e:
+        log.warning(f"Unable to show GUI dialog ({e}), logging message instead...")
+        log.info(msg)
+        return None
+
+
+def ynbox(msg, title="", *args, **kwargs):
+    """
+    Safe wrapper for easygui ynbox that falls back to returning True (Yes) if GUI is unavailable.
+    """
+    try:
+        return _ynbox_orig(msg=msg, title=title, *args, **kwargs)
+    except (RuntimeError, Exception) as e:
+        log.warning(f"Unable to show GUI dialog ({e}), automatically returning True in headless mode...")
+        log.info(f"Dialog prompt (auto-answered Yes): {msg}")
+        return True
+
+
+def boolbox(msg, title="", choices=("Yes", "No"), *args, **kwargs):
+    """
+    Safe wrapper for easygui boolbox that falls back to returning True (first choice) if GUI is unavailable.
+    """
+    try:
+        return _boolbox_orig(msg=msg, title=title, choices=choices, *args, **kwargs)
+    except (RuntimeError, Exception) as e:
+        log.warning(f"Unable to show GUI dialog ({e}), automatically returning True in headless mode...")
+        log.info(f"Dialog prompt (auto-answered {choices[0]}): {msg}")
+        return True
 
 folder_symbol = "\U0001f4c2"  # 📂
 refresh_symbol = "\U0001f504"  # 🔄

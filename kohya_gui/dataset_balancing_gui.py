@@ -1,19 +1,12 @@
 import os
 import re
 import gradio as gr
-from easygui import msgbox, boolbox
-from .common_gui import get_folder_path, scriptdir, list_dirs, create_refresh_button
+from .common_gui import get_folder_path, scriptdir, list_dirs, create_refresh_button, msgbox, boolbox
 
 from .custom_logging import setup_logging
 
 # Set up logging
 log = setup_logging()
-
-
-import os
-import re
-import logging as log
-from easygui import msgbox
 
 def dataset_balancing(concept_repeats, folder, insecure):
 

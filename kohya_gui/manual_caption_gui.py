@@ -1,6 +1,5 @@
 import gradio as gr
-from easygui import msgbox, boolbox
-from .common_gui import get_folder_path, scriptdir, list_dirs
+from .common_gui import get_folder_path, scriptdir, list_dirs, msgbox, boolbox
 from math import ceil
 import os
 import re

@@ -12,10 +12,9 @@ try:
 except ImportError:
     visibility = False
 
-from easygui import msgbox
 from threading import Thread, Event
 from .custom_logging import setup_logging
-from .common_gui import setup_environment
+from .common_gui import setup_environment, msgbox
 
 
 class TensorboardManager:
